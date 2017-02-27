@@ -32,9 +32,11 @@ AC_SUBST(PACKAGE_VERSION)
 # ZeroMQ version 3.1: 3:0:0 (ABI version 3)
 # ZeroMQ version 4.0: 4:0:0 (ABI version 4)
 # ZeroMQ version 4.1: 5:0:0 (ABI version 5)
+# ZeroMQ version 4.1.5: 5:1:0 (ABI version 5)
+# ZeroMQ version 4.1.6: 5:2:0 (ABI version 5)
 #
 # libzmq -version-info current:revision:age
-LTVER="5:0:0"
+LTVER="5:2:0"
 AC_SUBST(LTVER)
 
 # Take a copy of original flags
@@ -291,7 +293,7 @@ fi
 
 # CPU-specific optimizations
 case "${host_cpu}" in
-    *sparc*)
+    *sparc64*)
         AC_LANG_PUSH([C++])
         LIBZMQ_CHECK_LANG_FLAG_PREPEND([-mcpu=v9])
         AC_LANG_POP([C++])
@@ -304,8 +306,8 @@ esac
 LIBZMQ_CHECK_DOC_BUILD
 
 # Check polling system
-LIBZMQ_CHECK_POLLER([CPPFLAGS="${CPPFLAGS} -D${libzmq_cv_poller_flag}"],
-    [AC_MSG_ERROR([Unable to continue without polling system])])
+# Check polling system, set appropriate macro in src/platform.hpp
+LIBZMQ_CHECK_POLLER
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -468,6 +470,7 @@ AC_ARG_WITH([norm],
 AC_MSG_CHECKING("with_norm_ext = ${with_norm_ext}")
 
 if test "x$with_norm_ext" != "xno"; then
+    AC_MSG_RESULT([yes])
     AC_DEFINE(ZMQ_HAVE_NORM, 1, [Have NORM protocol extension])
 
     if test "x$wwith_norm_ext" != "xyes"; then
@@ -475,8 +478,9 @@ if test "x$with_norm_ext" != "xno"; then
         LIBZMQ_EXTRA_CXXFLAGS="-I${norm_path}/include ${LIBZMQ_EXTRA_CXXFLAGS}"
         LIBZMQ_EXTRA_LDFLAGS="-I${norm_path}/include ${LIBZMQ_EXTRA_LDFLAGS}"
     fi
-
     LIBS="-lnorm $LIBS"
+else
+    AC_MSG_RESULT([no])
 fi
 
 # Set -Wall, -Werror and -pedantic
@@ -560,6 +564,7 @@ AC_CONFIG_FILES([ \
     Makefile \
     src/libzmq.pc \
     doc/Makefile \
+    builds/Makefile \
     builds/msvc/Makefile \
     builds/redhat/zeromq.spec])
 

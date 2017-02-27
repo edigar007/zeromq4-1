@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I config
 
 SUBDIRS = doc
 
-DIST_SUBDIRS = builds/msvc doc
+DIST_SUBDIRS = doc builds builds/msvc
 
 pkgconfig_DATA = src/libzmq.pc
 
@@ -617,6 +617,8 @@ EXTRA_DIST = \
 	MAINTAINERS	\
 	src/libzmq.pc.cmake.in \
 	src/libzmq.vers \
+	src/version.rc.in \
+	tests/CMakeLists.txt \
 	tweetnacl \
 	tools/curve_keygen.cpp
 
